@@ -6,8 +6,10 @@ import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.parsing.Parser;
 import com.jayway.restassured.path.json.config.JsonPathConfig;
 import com.jayway.restassured.response.Response;
+import org.codehaus.groovy.control.messages.Message;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -130,5 +132,18 @@ public class WebApiTest {
         assertThat(nextTitleLink).isEqualTo("/title?page=2");
         String headerValue = response.header("headerName");
         assertThat(headerValue).isNull();
+    }
+
+    @Test
+    @Ignore
+    public void auth() {
+        given().
+            auth().
+            preemptive().
+            basic("user", "pass").
+        when().
+            get(baseUrl).
+        then().
+            body("base", is(nullValue()));
     }
 }
