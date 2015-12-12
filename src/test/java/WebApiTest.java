@@ -5,6 +5,7 @@ import com.jayway.restassured.config.RestAssuredConfig;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.parsing.Parser;
 import com.jayway.restassured.path.json.config.JsonPathConfig;
+import com.jayway.restassured.response.Response;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -97,5 +98,37 @@ public class WebApiTest {
         .body("store.book.author.collect { it.length() }.sum()", greaterThan(50))
         .body("store.book.author*.length().sum()", greaterThan(50));
 
+    }
+
+    @Test
+    public void title() {
+        String nextTitleLink =
+                given().
+                    param("param_name", "param_value").
+                when().
+                    get(baseUrl + "/title.json").
+                then().
+                    contentType(ContentType.JSON).
+                    body("title", is("My Title")).
+                extract().
+                    path("_links.next.href");
+        assertThat(nextTitleLink).isEqualTo("/title?page=2");
+    }
+
+    @Test
+    public void title2() {
+        Response response = given().
+                param("param_name", "param_value").
+                when().
+                get(baseUrl + "/title.json").
+                then().
+                contentType(ContentType.JSON).
+                body("title", is("My Title")).
+                extract().
+                response();
+        String nextTitleLink = response.path("_links.next.href");
+        assertThat(nextTitleLink).isEqualTo("/title?page=2");
+        String headerValue = response.header("headerName");
+        assertThat(headerValue).isNull();
     }
 }
