@@ -21,11 +21,8 @@ import static com.jayway.restassured.module.jsv.JsonSchemaValidator.*;
 import static org.hamcrest.Matchers.*;
 
 public class WebApiTest {
-    @Test
-    public void testSomeLibraryMethod() {
-        Library classUnderTest = new Library();
-        assertThat(classUnderTest.someLibraryMethod()).isEqualTo(true);
-    }
+
+    private String baseUrl = "http://localhost:8080/";
 
     @BeforeClass
     public static void beforeClass() {
@@ -34,21 +31,21 @@ public class WebApiTest {
 
     @Test
     public void example1() {
-        get("/lotto.json")
+        get(baseUrl + "/lotto.json")
         .then()
         .body("lotto.lottoId", equalTo(5));
     }
 
     @Test
     public void example1Alternative() {
-        get("/lotto.json")
+        get(baseUrl + "/lotto.json")
         .then()
         .body("lotto.winners.winnerId", hasItems(23, 54));
     }
 
     @Test
     public void floatAsFloat() {
-        get("/price.json")
+        get(baseUrl + "/price.json")
         .then()
         .body("price", is(12.12f));
     }
@@ -58,14 +55,14 @@ public class WebApiTest {
         given()
         .config(newConfig().jsonConfig(jsonConfig().numberReturnType(BIG_DECIMAL)))
         .when()
-        .get("/price.json")
+        .get(baseUrl + "/price.json")
         .then()
         .body("price", is(new BigDecimal("12.12")));
     }
 
     @Test
     public void validateProductSuccess() {
-        get("/products/all.json")
+        get(baseUrl + "/products/all.json")
         .then()
         .assertThat()
         .body(matchesJsonSchemaInClasspath("products-schema.json"));
@@ -73,7 +70,7 @@ public class WebApiTest {
 
     @Test
     public void emptyJson() {
-        get("/empty.json")
+        get(baseUrl + "/empty.json")
         .then()
         .body("$", hasItems(1, 2, 3));
     }
@@ -84,8 +81,11 @@ public class WebApiTest {
         .parameters("firstName", "John", "lastName", "Doe")
         .header("content-type", ContentType.TEXT)
         .when()
-        .post("/greeting")
+        .post(baseUrl + "/greeting")
         .then()
-        .body("greeting.firstName", is("John"));
+        .body("greeting.firstName", is("John"))
+        .body("greeting.lastName", is("Doe"))
+        .body(hasXPath("/greeting/firstName", containsString("Jo")));
     }
+
 }
