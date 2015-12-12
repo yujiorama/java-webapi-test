@@ -60,4 +60,13 @@ public class WebApiTest {
         .then()
         .body("price", is(new BigDecimal("12.12")));
     }
+
+    @Test
+    public void validateProductSuccess() {
+        get("/products/all.json")
+        .then()
+        .assertThat()
+        .body(matchesJsonSchemaInClasspath("products-schema.json"));
+    }
+
 }
