@@ -88,4 +88,14 @@ public class WebApiTest {
         .body(hasXPath("/greeting/firstName", containsString("Jo")));
     }
 
+    @Test
+    public void store() {
+        when()
+        .get(baseUrl + "/store.json")
+        .then()
+        .body("store.book.findAll { it.price < 10 }.title", hasItems("Sayings of the Century", "Moby Dick"))
+        .body("store.book.author.collect { it.length() }.sum()", greaterThan(50))
+        .body("store.book.author*.length().sum()", greaterThan(50));
+
+    }
 }
