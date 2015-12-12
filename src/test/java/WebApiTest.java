@@ -1,6 +1,8 @@
 import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.config.HeaderConfig;
 import com.jayway.restassured.config.JsonConfig;
 import com.jayway.restassured.config.RestAssuredConfig;
+import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.parsing.Parser;
 import com.jayway.restassured.path.json.config.JsonPathConfig;
 import org.junit.Before;
@@ -69,4 +71,21 @@ public class WebApiTest {
         .body(matchesJsonSchemaInClasspath("products-schema.json"));
     }
 
+    @Test
+    public void emptyJson() {
+        get("/empty.json")
+        .then()
+        .body("$", hasItems(1, 2, 3));
+    }
+
+    @Test
+    public void greeting() {
+        given()
+        .parameters("firstName", "John", "lastName", "Doe")
+        .header("content-type", ContentType.TEXT)
+        .when()
+        .post("/greeting")
+        .then()
+        .body("greeting.firstName", is("John"));
+    }
 }
