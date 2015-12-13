@@ -1,4 +1,7 @@
 apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = 'org.junit.runner.JUnitCore'
 
 repositories {
     jcenter()
@@ -7,16 +10,21 @@ repositories {
 dependencies {
     compile 'com.jayway.restassured:json-path:2.7.0'
     compile 'com.jayway.restassured:xml-path:2.7.0'
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.assertj:assertj-core:3.2.0'
-    testCompile 'com.jayway.restassured:rest-assured:2.7.0'
-    testCompile 'com.jayway.restassured:json-schema-validator:2.7.0'
+    compile 'junit:junit:4.12'
+    compile 'org.assertj:assertj-core:3.2.0'
+    compile 'com.jayway.restassured:rest-assured:2.7.0'
+    compile 'com.jayway.restassured:json-schema-validator:2.7.0'
 }
 
 sourceCompatibility = targetCompatibility = 1.8
 
 def defaultEncoding = 'UTF-8'
 tasks.withType(AbstractCompile).each { it.options.encoding = defaultEncoding }
+
+task test(type: Test, overwrite: true) {
+    testClassesDir = sourceSets.main.output.classesDir
+    exclude '**/AllTests.class'
+}
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.9'
